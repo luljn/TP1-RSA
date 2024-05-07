@@ -10,15 +10,45 @@ Created on Fri Apr 17 13:44:40 2020
 import hashlib
 import binascii
 
-def home_mod_expnoent(x,y,n): #exponentiation modulaire
-# à compléter
-    pass
-            
+def home_mod_expnoent(x, y, n):
+    """
+    Exponentiation modulaire x^y % n.
+    :param x: Base
+    :param y: Exposant
+    :param n: Modulo
+    :return: Résultat de l'exponentiation modulaire
+    """
+    resultat = 1
+    x = x % n  # Réduire x modulo n
+    while y > 0:
+        if y % 2 == 1:
+            resultat = (resultat * x) % n
+        y = y // 2
+        x = (x * x) % n
+    return resultat
 
 
-def home_ext_euclide(y,b): #algorithme d'euclide étendu pour la recherche de l'exposant secret
-# à compléter
-    pass
+
+def home_ext_euclide(y, b):
+    """
+    Algorithme d'Euclide étendu pour la recherche de l'exposant secret.
+    :param y: Première valeur
+    :param b: Deuxième valeur
+    :return: Exposant secret
+    """
+    a1, a2, a3 = 1, 0, y
+    b1, b2, b3 = 0, 1, b
+    while True:
+        if b3 == 0:
+            return a3
+        if b3 == 1:
+            return b2
+        q = a3 // b3
+        t1, t2, t3 = a1 - q * b1, a2 - q * b2, a3 - q * b3
+        a1, a2, a3 = b1, b2, b3
+        b1, b2, b3 = t1, t2, t3
+
+
 
 def home_pgcd(a,b): #recherche du pgcd
     if(b==0): 
@@ -26,11 +56,14 @@ def home_pgcd(a,b): #recherche du pgcd
     else: 
         return home_pgcd(b,a%b)
 
+
+
 def home_string_to_int(x): # pour transformer un string en int
     z=0
     for i in reversed(range(len(x))):
         z=int(ord(x[i]))*pow(2,(8*i))+z
     return(z)
+
 
 
 def home_int_to_string(x): # pour transformer un int en string
@@ -41,7 +74,6 @@ def home_int_to_string(x): # pour transformer un int en string
         res1=(res1-res)//(pow(2,8))
         txt=txt+chr(res)
     return txt
-
 
 
 
