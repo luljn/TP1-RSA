@@ -91,14 +91,14 @@ def main():
     x2a=3503815992030544427564583819137 #q
     na=x1a*x2a  #n
     phia=((x1a-1)*(x2a-1))//home_pgcd(x1a-1,x2a-1)
-    ea=17 #exposant public
+    ea=83 #exposant public
     da=home_ext_euclide(phia,ea) #exposant privé
     #voici les éléments de la clé de bob
     x1b=9434659759111223227678316435911 #p
     x2b=8842546075387759637728590482297 #q
     nb=x1b*x2b # n
     phib=((x1b-1)*(x2b-1))//home_pgcd(x1b-1,x2b-1)
-    eb=23 # exposants public
+    eb=89 # exposants public
     db=home_ext_euclide(phib,eb) #exposant privé
 
 
