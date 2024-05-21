@@ -1,25 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Apr 17 13:44:40 2020
-
-@author: Mr ABBAS-TURKI
-"""
-
-
-
 import hashlib
 import binascii
 
 def home_mod_expnoent(x, y, n):
-    """
-    Exponentiation modulaire x^y % n.
-    :param x: Base
-    :param y: Exposant
-    :param n: Modulo
-    :return: Résultat de l'exponentiation modulaire
-    """
     resultat = 1
-    x = x % n  # Réduire x modulo n
+    x = x % n
     while y > 0:
         if y % 2 == 1:
             resultat = (resultat * x) % n
@@ -30,12 +14,6 @@ def home_mod_expnoent(x, y, n):
 
 
 def home_ext_euclide(y, b):
-    """
-    Algorithme d'Euclide étendu pour la recherche de l'exposant secret.
-    :param y: Première valeur
-    :param b: Deuxième valeur
-    :return: Exposant secret
-    """
     a1, a2, a3 = 1, 0, y
     b1, b2, b3 = 0, 1, b
     while True:
