@@ -1,7 +1,8 @@
 import hashlib
 import binascii
+import random
 
-def home_mod_expnoent(x, y, n):
+def home_mod_expnoent(x, y, n): # exponentiation modulaire
     # x^y % n
     resultat = 1
     x = x % n
@@ -14,7 +15,7 @@ def home_mod_expnoent(x, y, n):
 
 
 
-def home_ext_euclide(y, b):
+def home_ext_euclide(y, b): # algorithme d'euclide étendu (Inverse de b modulo y)
     a1, a2, a3 = 1, 0, y
     b1, b2, b3 = 0, 1, b
     while True:
@@ -29,7 +30,7 @@ def home_ext_euclide(y, b):
 
 
 
-def home_pgcd(a,b): #recherche du pgcd
+def home_pgcd(a,b): # recherche du pgcd
     if(b==0): 
         return a 
     else: 
@@ -56,7 +57,7 @@ def home_int_to_string(x): # pour transformer un int en string
 
 
 
-def mot50char(): #entrer le secret
+def mot50char(): # entrer le secret
     secret=input("donner un secret de 50 caractères au maximum : ")
     while (len(secret)>51):
         secret=input("c'est beaucoup trop long, 50 caractères S.V.P : ")
@@ -64,7 +65,7 @@ def mot50char(): #entrer le secret
 
 
 
-def CRT(xi, xj, d, c, n):
+def CRT(xi, xj, d, c, n): # exponentiation modulaire via le CRT(Chinese Remainder Theorem)
     p = max(xi, xj)
     q = min(xi, xj)
     inv_q = home_ext_euclide(p, q) # q^-1
@@ -76,6 +77,25 @@ def CRT(xi, xj, d, c, n):
     m = home_mod_expnoent((mq + h*q), 1, n)
     
     return m
+
+
+
+def padMessageBlock(m, k):
+    l = len(m)
+    x = bytes([random.randint(1, 255) for _ in range(k-l-3)])
+    block = b'\x00\x02' + x + b'\x00' + m
+    
+    return block
+
+
+
+def unpadMessageBlock(block):
+    p = block.split(b'\x00', 2)
+    
+    if (len(p) < 3 or p[0] != b'\x00' or p[1] != b'\x02'):
+        raise ValueError("Mauvais bourrage")
+    
+    return p[2]
     
 
 
@@ -121,7 +141,7 @@ def main():
     print(chif)
     print("*******************************************************************")
     print("On utilise la fonction de hashage MD5 pour obtenir le hash du message",secret)
-    Bhachis0=hashlib.sha256(secret.encode(encoding='UTF-8')).digest()#.md5(secret.encode(encoding='UTF-8',errors='strict')).digest() #MD5 du message
+    Bhachis0=hashlib.sha256(secret.encode(encoding='UTF-8', errors='strict')).digest()#.md5(secret.encode(encoding='UTF-8',errors='strict')).digest() #MD5 du message
     print("voici le hash en nombre décimal ")
     Bhachis1=binascii.b2a_uu(Bhachis0)
     Bhachis2=Bhachis1.decode() #en string
@@ -143,7 +163,7 @@ def main():
     designe=CRT(x1b, x2b, eb, signe, nb)#home_mod_expnoent(signe, eb, nb)
     print(designe)
     print("Alice vérifie si elle obtient la même chose avec le hash de ",dechif)
-    Ahachis0=hashlib.sha256(dechif.encode(encoding='UTF-8')).digest()#.md5(dechif.encode(encoding='UTF-8',errors='strict')).digest()
+    Ahachis0=hashlib.sha256(dechif.encode(encoding='UTF-8', errors='strict')).digest()#.md5(dechif.encode(encoding='UTF-8',errors='strict')).digest()
     Ahachis1=binascii.b2a_uu(Ahachis0)
     Ahachis2=Ahachis1.decode()
     Ahachis3=home_string_to_int(Ahachis2)
