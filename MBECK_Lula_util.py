@@ -11,6 +11,7 @@ def home_mod_expnoent(x, y, n): # exponentiation modulaire
             resultat = (resultat * x) % n
         y = y // 2
         x = (x * x) % n
+        
     return resultat
 
 
@@ -57,10 +58,13 @@ def home_int_to_string(x): # pour transformer un int en string
 
 
 
-def mot50char(): # entrer le secret
-    secret=input("donner un secret de 50 caractères au maximum : ")
-    while (len(secret)>51):
-        secret=input("c'est beaucoup trop long, 50 caractères S.V.P : ")
+def motChar(n): # entrer le secret
+    limite = (n.bit_length() + 7) // 8
+    secret=input("donner un secret de " + str(limite) +" caractères au maximum : ")
+
+    while (len(secret)>limite):
+        secret=input("c'est beaucoup trop long, " + str(limite) + " caractères S.V.P : ")
+        
     return(secret)
 
 
@@ -131,7 +135,7 @@ def main():
     print("il est temps de lui envoyer votre secret ")
     print("*******************************************************************")
     x=input("appuyer sur entrer")
-    secret=mot50char()
+    secret=motChar(na)
     print("*******************************************************************")
     print("voici la version en nombre décimal de ",secret," : ")
     num_sec=home_string_to_int(secret)
