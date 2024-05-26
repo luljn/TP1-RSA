@@ -58,7 +58,7 @@ def home_int_to_string(x): # pour transformer un int en string
 
 
 
-def motChar(n): # entrer le secret
+def home_motChar(n): # entrer le secret
     limite = (n.bit_length() + 7) // 8
     secret=input("donner un secret de " + str(limite) +" caractères au maximum : ")
 
@@ -69,7 +69,7 @@ def motChar(n): # entrer le secret
 
 
 
-def CRT(xi, xj, d, c, n): # exponentiation modulaire via le CRT(Chinese Remainder Theorem)
+def home_CRT(xi, xj, d, c, n): # exponentiation modulaire via le CRT(Chinese Remainder Theorem)
     p = max(xi, xj)
     q = min(xi, xj)
     inv_q = home_ext_euclide(p, q) # q^-1
@@ -84,22 +84,51 @@ def CRT(xi, xj, d, c, n): # exponentiation modulaire via le CRT(Chinese Remainde
 
 
 
-def padMessageBlock(m, k):
-    l = len(m)
-    x = bytes([random.randint(1, 255) for _ in range(k-l-3)])
-    block = b'\x00\x02' + x + b'\x00' + m
+def home_padMessageBlock(m, n, k = 8):
+    # m : message
+    # n : clé publique
+    # k : taille du bloc (8 par défaut)
     
-    return block
+    encrypted_blocks = []
+  
+    key_size = (n.bit_length() + 7) // 8 #la taille maximale du la clé
+    
+    blocks = [m[i:i+k] for i in range(0, len(m), k)] #découpage du message en blocs
+
+    for block in blocks:
+        offset_size = key_size - k
+        random_bytes = [random.randint(1, 255) for _ in range(offset_size - 3)] #déclaration d'un tableau de 0, (k-j-3) fois
+
+        #génération du bloc après bourrage 00||02||x||00||mi
+        padded_block = b'\x00\x02' 
+        for random_byte in random_bytes:
+            padded_block += random_byte
+            padded_block += b'\x00' + block.encode()
+            
+            encrypted_blocks.append(padded_block)
+    
+
+    return encrypted_blocks
+    
 
 
-
-def unpadMessageBlock(block):
-    p = block.split(b'\x00', 2)
+def home_unpadMessageBlock(encrypted_blocks):
     
-    if (len(p) < 3 or p[0] != b'\x00' or p[1] != b'\x02'):
-        raise ValueError("Mauvais bourrage")
-    
-    return p[2]
+    originalMessage = ''
+  
+    #pour chaque bloc, on retire le bourrage et on ne retient que la partie du bloc portant le message
+    for encrypted_block in encrypted_blocks:
+        i = 0
+        temp = ''
+        while(encrypted_block[len(encrypted_block)-1-i] != 0):
+            temp += chr(encrypted_block[len(encrypted_block)-1-i])
+            i += 1
+        
+        temp = temp[::-1]
+        decrypted_block = temp
+        originalMessage += decrypted_block
+        
+    return originalMessage
     
 
 
@@ -135,7 +164,7 @@ def main():
     print("il est temps de lui envoyer votre secret ")
     print("*******************************************************************")
     x=input("appuyer sur entrer")
-    secret=motChar(na)
+    secret=home_motChar(na)
     print("*******************************************************************")
     print("voici la version en nombre décimal de ",secret," : ")
     num_sec=home_string_to_int(secret)
@@ -160,11 +189,11 @@ def main():
     x=input("appuyer sur entrer")
     print("*******************************************************************")
     print("Alice déchiffre le message chiffré \n",chif,"\nce qui donne ")
-    dechif=home_int_to_string(CRT(x1a, x2a, da, chif, na))#()home_mod_expnoent(chif, da, na)
+    dechif=home_int_to_string(home_CRT(x1a, x2a, da, chif, na))#()home_mod_expnoent(chif, da, na)
     print(dechif)
     print("*******************************************************************")
     print("Alice déchiffre la signature de Bob \n",signe,"\n ce qui donne  en décimal")
-    designe=CRT(x1b, x2b, eb, signe, nb)#home_mod_expnoent(signe, eb, nb)
+    designe=home_CRT(x1b, x2b, eb, signe, nb)#home_mod_expnoent(signe, eb, nb)
     print(designe)
     print("Alice vérifie si elle obtient la même chose avec le hash de ",dechif)
     Ahachis0=hashlib.sha256(dechif.encode(encoding='UTF-8', errors='strict')).digest()#.md5(dechif.encode(encoding='UTF-8',errors='strict')).digest()
